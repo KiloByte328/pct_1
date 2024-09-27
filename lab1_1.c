@@ -22,22 +22,28 @@ int main (int argc, char *argv[])
         double start_t = MPI_Wtime ();
         for (;tags[rank] != 1;)
         {
-        if (msg_tg == 15)
+        if (rank == commsize-1)
         {
             MPI_Sendrecv(&msg, n, MPI_CHAR, 0, msg_tg, &msg, n, MPI_CHAR, rank-1, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
             tags[stat.MPI_TAG] = 1;
             msg_tg = stat.MPI_TAG;
         }
+        else
+        {
             MPI_Sendrecv(&msg, n, MPI_CHAR, rank+1, msg_tg, &msg, n, MPI_CHAR, rank-1, MPI_ANY_TAG, MPI_COMM_WORLD, &stat);
             tags[stat.MPI_TAG] = 1;
             msg_tg = stat.MPI_TAG;
         }
+        }
         double end_t = MPI_Wtime();
-        printf ("n = %d , start time = %f , end time = %f , delta time = %f", n, start_t, end_t, start_t - end_t);
+        if (rank == 0)
+            printf ("n = %d , start time = %f , end time = %f , delta time = %f \n", n, start_t, end_t, end_t - start_t);
         n = n * 1024;
         for(int i = 0; i < 16; i++)
         {
             tags[i] = 0;
         }
     }
+    MPI_Finalize();
+    return 0;
 }
