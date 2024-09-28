@@ -15,12 +15,12 @@ int main (int argc, char *argv[])
         {
             rbuf[b] = rand() % 128;
         }
-        char sbuf[n*commsize];
+        char sbuf[commsize][n];
         double start_t = MPI_Wtime ();
         if(rank == 0)
-        for(int i = commsize; i > 0; i--)
+        for(int i = commsize-1; i > 0; i--)
         {
-            MPI_Recv (&sbuf[n*i], n, MPI_CHAR, i, 0, MPI_COMM_WORLD, 0);
+            MPI_Recv (&sbuf[i], n, MPI_CHAR, i, 0, MPI_COMM_WORLD, 0);
         }
         else
         {
